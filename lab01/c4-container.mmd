@@ -1,0 +1,31 @@
+flowchart TB
+  analyst["Analyst<br/>[Person]<br/>head office"]:::person
+  manager["Branch manager<br/>[Person]<br/>own branch only"]:::person
+  pos["Branch POS systems<br/>[External system, x3]<br/>daily CSV exports"]:::external
+  mail["E-mail service<br/>[External system]<br/>notification e-mails"]:::external
+  idp["Identity provider<br/>[External system]<br/>head office login"]:::external
+
+  subgraph boundary["Monthly Sales Report System (release 1, one server)"]
+    landing[("Landing zone<br/>[File system, data/yyyy-MM/]<br/>raw daily CSV files")]:::store
+    batch["Report batch<br/>[Java 25, one JVM]<br/>ingest, engine and renderers: parses CSV, aggregates, writes PDF, Excel, HTML"]:::container
+    store[("Report store<br/>[File system]<br/>finished reports per month and branch")]:::store
+    audit[("Audit log<br/>[Append-only file]<br/>access attempts")]:::store
+    desktop["Desktop viewer<br/>[JavaFX]<br/>analyst views reports"]:::container
+    web["Web report page<br/>[Java 25 web server, HTML]<br/>branch managers view own branch"]:::container
+  end
+
+  pos -- "uploads daily CSV files [SFTP]" --> landing
+  batch -- "reads CSV files [file system]" --> landing
+  batch -- "writes PDF, Excel, HTML [file system]" --> store
+  batch -- "sends report-ready e-mail [SMTP]" --> mail
+  analyst -- "views and exports reports [GUI]" --> desktop
+  desktop -- "reads reports [file system]" --> store
+  manager -- "views own branch report [HTTPS]" --> web
+  web -- "reads own-branch reports [file system]" --> store
+  web -- "appends access attempts [file system]" --> audit
+  web -- "authenticates managers [HTTPS]" --> idp
+
+  classDef person fill:#08427b,color:#ffffff,stroke:#052e56
+  classDef container fill:#438dd5,color:#ffffff,stroke:#2e6295
+  classDef store fill:#438dd5,color:#ffffff,stroke:#2e6295
+  classDef external fill:#8a8a8a,color:#ffffff,stroke:#6b6b6b
