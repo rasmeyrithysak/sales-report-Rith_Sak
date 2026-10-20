@@ -84,9 +84,3 @@ Fill in before submitting. Only list what each member really did; `git log --for
 | Ouk Puthirith | Part 2: C4 context and container diagrams and notes. Part 3: Maven project, model records, CSV parser and tests. Part 4: Strategy renderers, Observer `MonthLoader`, dependency rules test and design review. |
 | Rasmey Rithysak | Part 1: quality-attribute scenarios and utility tree. Part 5: ADR-0001 and ADR-0002 and the Part 5 section of the README. |
 
-## Check before submitting
-
-- [ ] `mvn -q verify` prints nothing and exits with 0, also on a fresh clone of branch `lab-01`
-- [ ] `java tools/SampleData.java` then `mvn -q compile exec:java` prints 2 998 accepted and 2 rejected
-- [ ] both PNG diagrams are committed next to their `.mmd` sources
-- [ ] `git log --format='%an | %s' -- src/` shows both members
